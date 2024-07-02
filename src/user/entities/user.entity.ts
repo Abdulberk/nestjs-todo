@@ -9,11 +9,10 @@ import {
 import { Role } from 'src/auth/guards/role.guard';
 import { Todo } from 'src/todo/entities/todo.entity';
 
-
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column({ unique: true })
   email: string;

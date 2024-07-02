@@ -26,7 +26,7 @@ export class Todo {
 
   @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   status: Status;
-  
+
   @ManyToOne(() => User, (user) => user.todos)
   user: User;
 

@@ -1,12 +1,21 @@
 import { Module } from '@nestjs/common';
-import { TodoController } from './todo.controller';
-import { TodoService } from './todo.service';
-import { Todo } from './entities/todo.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { Todo } from './entities/todo.entity';
+import { TodoService } from './todo.service';
+import { TodoController } from './todo.controller';
+import { TodoRepository } from './todo.repository';
+import { JwtService } from '@nestjs/jwt';
+import { AccessModule } from '@app/common/access-control/access-control.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([Todo])],
+  imports: [AccessModule, TypeOrmModule.forFeature([Todo])],
+  providers: [
+    {
+      provide: 'TodoRepositoryInterface',
+      useClass: TodoRepository,
+    },
+    TodoService,
+    JwtService,
+  ],
   controllers: [TodoController],
-  providers: [TodoService],
 })
 export class TodoModule {}
