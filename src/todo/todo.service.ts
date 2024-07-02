@@ -32,8 +32,7 @@ export class TodoService {
       return await this.todoRepository.findWithRelations({
         where: { user: { id: userId } as any },
         relations: ['user'],
-        select: 
-        {
+        select: {
           id: true,
           title: true,
           description: true,
@@ -42,8 +41,8 @@ export class TodoService {
             id: true,
             name: true,
             email: true,
-          }
-        }
+          },
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -74,7 +73,6 @@ export class TodoService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  
 
   async update(id: string, updateTodoDto: UpdateTodoDto, userId: string) {
     try {
