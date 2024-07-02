@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as passport from 'passport';
 import { Logger } from 'nestjs-pino';
-
+import cors from 'cors';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(passport.initialize());
@@ -15,6 +15,7 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  app.enableCors();
   app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
