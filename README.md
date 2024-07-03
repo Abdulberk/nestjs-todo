@@ -64,3 +64,69 @@ JWT_EXPIRES=3600
 JWT_REFRESH_SECRET=your_jwt_refresh_secret
 JWT_REFRESH_EXPIRES=86400
 ```
+
+
+## API Endpoints
+
+ - Register a new user:
+
+```bash 
+POST /auth/register
+BODY {
+   "name": "tester",
+   "email": "tester@gmail.com",
+   "password": "test123123"
+}
+```
+
+- Log in with the registered user:
+```bash 
+POST /auth/login
+BODY {
+   "email": "tester@gmail.com",
+   "password": "test123123"
+}
+```
+
+- Use the obtained JWT token for authorized requests by adding it to the Authorization header:
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+- Create a new Todo (requires authentication)
+
+```bash
+POST /todos/create 
+BODY {
+  "title": "Sample Todo",
+  "description": "This is a sample todo."
+}
+```
+
+- Get all Todos for the authenticated user (requires authentication)
+```bash
+GET /todos/all
+```
+
+- Get a specific Todo by ID (requires authentication)
+```bash
+GET /todos/:id
+```
+
+- Update a Todo by ID (requires authentication)
+```bash
+PATCH /todos/:id
+BODY {
+  "title": "Updated Todo Title",
+  "description": "Updated description.",
+  "status": "COMPLETED"
+}
+```
+
+- Delete a Todo by ID (requires authentication)
+
+```bash
+ DELETE /todos/:id
+```
+
+
