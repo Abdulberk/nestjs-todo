@@ -40,7 +40,20 @@ $ npm run test:cov
 
 ## Configuration
 
-Copy the example environment file and edit it with your configuration:
+1. Copy the example environment file and edit it with your configuration:
 ```bash
 $ cp .env.example .env
+```
+2. Open the .env file and update the database connection settings and JWT secret:
+
+```bash
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+DB_DATABASE=your_db_name
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES=3600
+JWT_REFRESH_SECRET=your_jwt_refresh_secret
+JWT_REFRESH_EXPIRES=86400
 ```
