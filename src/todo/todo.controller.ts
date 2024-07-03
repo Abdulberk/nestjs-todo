@@ -40,6 +40,7 @@ export class TodoController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, RoleGuard, TodoOwnershipGuard)
+  @Roles(Role.USER)
   async findOne(@Param('id') id: string) {
     return await this.todoService.findOne(id);
   }

@@ -37,6 +37,8 @@ export class TodoService {
           title: true,
           description: true,
           status: true,
+          createdAt: true,
+          updatedAt: true,
           user: {
             id: true,
             name: true,
