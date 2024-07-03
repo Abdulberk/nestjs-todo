@@ -38,6 +38,13 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+```bash
+# specific unit test (controllers)
+$ npm run test:todo
+$ npm run test:auth
+```
+
+
 ## Configuration
 
 1. Copy the example environment file and edit it with your configuration:
