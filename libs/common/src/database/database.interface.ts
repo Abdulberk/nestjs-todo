@@ -3,10 +3,15 @@ import {
   DeleteResult,
   FindManyOptions,
   FindOneOptions,
+  FindOptionsWhere,
   UpdateResult,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+export enum Order {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
 export interface BaseInterfaceRepository<T> {
   create(data: DeepPartial<T>): T;
   createMany(data: DeepPartial<T>[]): T[];
@@ -20,7 +25,15 @@ export interface BaseInterfaceRepository<T> {
     id: string | number,
     userId: string | number,
   ): Promise<DeleteResult>;
-  findWithRelations(relations: FindManyOptions<T>): Promise<T[]>;
+  findWithRelationsAndCount(
+    whereCondition: FindOptionsWhere<T>,
+    relations: string[],
+    selectFields: string[],
+    take: number,
+    skip: number,
+    orderField: keyof T,
+    orderDirection: 'ASC' | 'DESC',
+  ): Promise<[T[], number]>;
   preload(entityLike: DeepPartial<T>): Promise<T>;
   findOne(options: FindOneOptions<T>): Promise<T>;
   removeMany(data: T[]): Promise<T[]>;
@@ -30,3 +43,4 @@ export interface BaseInterfaceRepository<T> {
     updateData: QueryDeepPartialEntity<T>,
   ): Promise<{ updatedEntity: T; affected: number }>;
 }
+

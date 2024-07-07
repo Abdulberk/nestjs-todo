@@ -8,8 +8,9 @@ import {
   FindOneAndDeleteOptions,
   DataSource,
   DeleteResult,
+  FindOptionsOrder,
 } from 'typeorm';
-import { BaseInterfaceRepository } from './database.interface';
+import { BaseInterfaceRepository, Order } from './database.interface';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 export interface HasId {
@@ -50,8 +51,48 @@ export abstract class BaseAbstractRepository<T extends HasId>
     return await this.repository.findOne(filterCondition);
   }
 
-  public async findWithRelations(relations: FindManyOptions<T>): Promise<T[]> {
-    return await this.repository.find(relations);
+  public async findWithRelationsAndCount(
+    whereCondition: FindOptionsWhere<T>,
+    relations: string[],
+    selectFields: string[],
+    take: number,
+    skip: number,
+    orderField: keyof T,
+    orderDirection: 'ASC' | 'DESC',
+  ): Promise<[T[], number]> {
+    const queryBuilder = this.repository.createQueryBuilder('entity');
+
+    if (whereCondition) {
+      queryBuilder.where(whereCondition);
+    }
+
+    relations.forEach((relation) => {
+      queryBuilder.leftJoinAndSelect(`entity.${relation}`, relation);
+    });
+
+    if (selectFields.length > 0) {
+      const formattedFields = selectFields.map((field) =>
+        field.includes('.') ? field : `entity.${field}`,
+      );
+      queryBuilder.select(formattedFields);
+    }
+
+    if (take) {
+      queryBuilder.take(take);
+    }
+
+    if (skip) {
+      queryBuilder.skip(skip);
+    }
+
+    
+
+    if (orderField) {
+      queryBuilder.orderBy(`entity.${String(orderField)}`, orderDirection);
+    }
+
+    const [entities, count] = await queryBuilder.getManyAndCount();
+    return [entities, count];
   }
 
   public async findAll(options?: FindManyOptions<T>): Promise<T[]> {

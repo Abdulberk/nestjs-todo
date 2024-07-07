@@ -8,6 +8,7 @@ import {
   UseGuards,
   Req,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -17,6 +18,7 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { TodoOwnershipGuard } from './guards/todo-ownership.guard';
+import { QueryOptionsDto } from './dto/query-options.dto';
 
 @Controller('todos')
 export class TodoController {
@@ -33,9 +35,9 @@ export class TodoController {
   @Get('/all')
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard, RoleGuard)
-  async findAll(@Req() req: any) {
+  async findAll(@Req() req: any, @Query() queryOptions: QueryOptionsDto) {
     const userId = req.user.sub;
-    return await this.todoService.findAllByUser(userId);
+    return await this.todoService.findAllByUser(userId, queryOptions);
   }
 
   @Get(':id')

@@ -7,6 +7,11 @@ import {
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoRepositoryInterface } from './interfaces/todo.repository.interface';
+import { QueryOptionsDto } from './dto/query-options.dto';
+import { Order } from '@app/common/database/database.interface';
+import { Todo } from './entities/todo.entity';
+
+type TodoOrderField = keyof Todo;
 
 @Injectable()
 export class TodoService {
@@ -27,25 +32,37 @@ export class TodoService {
     }
   }
 
-  async findAllByUser(userId: string) {
+  async findAllByUser(userId: string, queryOptions: QueryOptionsDto) {
+    const { page, limit, orderDirection, orderField } = queryOptions;
+    const offset = (page - 1) * limit;
+
     try {
-      return await this.todoRepository.findWithRelations({
-        where: { user: { id: userId } as any },
-        relations: ['user'],
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-          user: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      });
+      const [todos, total] =
+        await this.todoRepository.findWithRelationsAndCount(
+          { user: { id: userId } as any },
+          ['user'],
+          [
+            'id',
+            'title',
+            'description',
+            'status',
+            'createdAt',
+            'updatedAt',
+            'user.id',
+            'user.email',
+          ],
+          limit,
+          offset,
+          (orderField as TodoOrderField) || 'createdAt',
+          orderDirection || 'ASC',
+        );
+
+      return {
+        todos,
+        count: todos.length,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
